@@ -53,10 +53,10 @@ print(E)
 
 # Make spectrum
 bins=1000
-Emin=np.min(E)
-Emin=Emin*(1-np.sign(Emin)*0.1)
-Emax=np.max(E)
-Emax=Emax*(1+np.sign(Emax)*0.1)
+EminA=np.min(E)
+EmaxA=np.max(E)
+Emin=EminA-0.1*(EmaxA-EminA)
+Emax=EmaxA+0.1*(EmaxA-EminA)
 dE=(Emax-Emin)/bins
 Ex=np.linspace(Emin,Emax,bins)
 Ey=np.zeros(bins)
