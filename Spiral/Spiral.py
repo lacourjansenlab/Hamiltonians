@@ -31,9 +31,12 @@ for n in range(N):
   lmu=np.linalg.norm(mu[n,:])
 #  print(lmu)  
 
+# Plot the structure
 plt.plot(x[:,0],x[:,1])
 for n in range(N):
   plt.arrow(x[n,0],x[n,1],mu[n,0],mu[n,1])
+# Make x and y direction equivalent on screen
+plt.axis('equal')
 plt.show()
 
 # Create Hamiltonian
@@ -66,8 +69,26 @@ for n in range(N):
   Emu[0]=np.inner(c[:,n],mu[:,0])
   Emu[1]=np.inner(c[:,n],mu[:,1])
   Emu[2]=np.inner(c[:,n],mu[:,2])
-  Ey[bin]=Ey[bin]+np.linalg.norm(Emu)
+  Ey[bin]=Ey[bin]+np.linalg.norm(Emu)**2
 
 plt.plot(Ex,Ey)
 plt.show()
 
+# Convolute spectrum
+# First create normalized Gaussian centered in the middle
+sigma=10
+Cx=Ex-(Emax+Emin)/2 # Make new axis with value zero in the middle of array
+Cy=np.exp(-Cx**2/2/sigma**2)/np.sqrt(2*np.pi*sigma**2)
+plt.plot(Cx,Cy)
+plt.show()
+
+# Do the actual convolusion
+Ny=np.convolve(Ey,Cy,mode='same')
+plt.plot(Ex,Ny)
+plt.show()
+
+# Plot everything in one final plot
+plt.plot(Ex,Ey/np.max(Ey))
+plt.plot(Ex,Cy/np.max(Cy))
+plt.plot(Ex,Ny/np.max(Ny))
+plt.show()
