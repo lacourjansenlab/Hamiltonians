@@ -1,6 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# This subroutine calculates stick spectra and spectra convolouted with
+# a Gaussian. Provide the Hamiltonian, H, the transition-dipoles, mu,
+# the size of the Hamiltonian, N, and the standard deviation for the
+# Gaussian convolution, sigma. Plots are generated. This subroutine is
+# intended as a way to test the Hamiltonians generated in this package.
 def absorption(H,mu,N,sigma):
   # Diagonalize Hamiltonian
   E,c=np.linalg.eig(H)
