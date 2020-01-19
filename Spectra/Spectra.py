@@ -14,8 +14,12 @@ def absorption(H,mu,N,sigma):
   bins=1000
   EminA=np.min(E)
   EmaxA=np.max(E)
-  Emin=EminA-0.1*(EmaxA-EminA)
-  Emax=EmaxA+0.1*(EmaxA-EminA)
+  # Ensure that the resolution is bigger than the witdh of each peak
+  if (EmaxA-EminA)/sigma>1000:
+      bins=(EmaxA-EminA)/sigma
+  # Add 10% of full bandwidth and three times the convolution width on each side
+  Emin=EminA-0.1*(EmaxA-EminA)-3*sigma
+  Emax=EmaxA+0.1*(EmaxA-EminA)+3*sigma
   dE=(Emax-Emin)/bins
   Ex=np.linspace(Emin,Emax,bins)
   Ey=np.zeros(bins)

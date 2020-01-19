@@ -17,7 +17,7 @@ print(A)
 # Define Parameters
 d=16.0 # Distance between molecules along spiral in Ångstrøm
 r=3.0 # Distance between layers in Ångstrøm
-N=20 # Number of molecules
+N=2 # Number of molecules
 n0=2 # Number of first point
 d2r=np.pi/180.0 # Degree to radians
 alpha=4.0*d2r # Alpha angle for transition dipole
@@ -37,7 +37,7 @@ for n in range(N):
   lmu=np.linalg.norm(mu[n,:])
 #  print(lmu)  
 
-# Plot the structure
+# Plot the structure in 2D
 plt.plot(x[:,0],x[:,1])
 for n in range(N):
   plt.arrow(x[n,0],x[n,1],mu[n,0],mu[n,1])
