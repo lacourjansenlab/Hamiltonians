@@ -55,6 +55,12 @@ class TestHamiltonian_ZeroHR(unittest.TestCase):
         }
         self.p = Autovar(parameters)
 
+        # Store verbose
+        self.p.v = False
+
+        # Determine number of states, for initiating arrays
+        self.p.size = self.p.N*(self.p.MaxVib+1)
+
         # Generate Franck-Condon factors between ground state and excited state
         from VibronicFrenkel import gen_fc_table
         fc_table = gen_fc_table(self.p.S,self.p.MaxVib)
