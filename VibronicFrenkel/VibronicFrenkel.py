@@ -23,18 +23,12 @@
 
 #------------------------------------------------------------------------------#
 # Hamiltonian generator
-def gen_hamiltonian(p):
+def gen_hamiltonian(p,ops,fc_table):
     import numpy as np
 
     # Determine size of one-particle Hamiltonian and initiate
     p.size = p.N*(p.MaxVib+1)
     H = np.zeros((p.size,p.size),dtype=np.double)
-
-    # Generate Franck-Condon factors between ground state and excited state
-    fc_table = gen_fc_table(p.S,p.MaxVib)
-
-    # Generate one-particle states Hamiltonian
-    ops = index_ops(p)
     H = gen_h_ops(p,fc_table,ops,H)
 
     return H
@@ -72,10 +66,11 @@ def gen_h_ops(p,fc_table,ops,H):
             if (loca < 0): continue
             for m in range(p.N):
                 if (n == m): continue
+                if (np.abs(n-m)>1): continue
                 for q in range(p.MaxVib+1):
                     locb = ops[m,q]
                     if (locb < 0 or loca == locb): continue
-                    H[loca,locb] = H[loca,locb] + p.J*fc_table[0,v]*fc_table[0,q]
+                    H[loca,locb] = p.J*fc_table[v,0]*fc_table[0,q]
     return H
 
 #------------------------------------------------------------------------------#
@@ -168,7 +163,15 @@ def main():
 
         p = Autovar(json.loads(input_file))
 
-    H = gen_hamiltonian(p)
+
+    # Generate Franck-Condon factors between ground state and excited state
+    fc_table = gen_fc_table(p.S,p.MaxVib)
+
+    # Index one-particle states
+    ops = index_ops(p)
+
+    # Generate Hamiltonian
+    H = gen_hamiltonian(p,ops,fc_table)
 
     print("Hamiltonian:\n",H)
 
