@@ -147,13 +147,13 @@ def factorial(n):
 
 #------------------------------------------------------------------------------#
 default_parameters = {
-    "N": 2,
+    "N": 10,
     "E": 0,
-    "J": 10,
-    "MaxVib": 1,
+    "J": 100,
+    "MaxVib": 5,
     "wvib": 1400,
-    "S": 1,
-    "sigma": 0,
+    "S": 0.6,
+    "sigma": 100,
     "oscillator_strength": [1,0,0],
     "units": "wavenumbers"
 }
@@ -173,6 +173,8 @@ def main():
     parser.add_argument('-I', default='default', help='Path to input file (json).')
     parser.add_argument('-v', action='store_true', help='Run verbose mode.')
     parser.add_argument('--test', action='store_true', help='Run test suite and exit.')
+    parser.add_argument('--absorption', action='store_true', help='Plot absorption spectrum.')
+    parser.add_argument('--structure', action='store_true', help='Visualize structure.')
     args = parser.parse_args()
 
     # Run tests
@@ -222,7 +224,30 @@ def main():
     # Generate Hamiltonian
     H = gen_hamiltonian(p,ops,fc_table)
 
+    # Plot absorption spectrum
+    if (args.absorption):
+        from Spectra.Spectra import absorption
+        absorption(H,mu,p.size,p.sigma)
+
+    # Plot structure
+    if (args.structure):
+        from Structure.Structure import visual
+        visual(pos,mu,p.N,0.2)
+        import matplotlib.pyplot as plt
+
 #------------------------------------------------------------------------------#
 # Run code
+if __name__ == "__main__" and __package__ is None:
+    # Ugly hack to allow absolute import from the root folder
+    # whatever its name is. Please forgive the heresy.
+    from sys import path
+    from os.path import dirname as dir
+
+    path.append(dir(path[0]))
+    __package__ = "VibronicFrenkel"
+
+    #path.append(dir(path[0]))
+    #__package__ = "Structure"
+
 if __name__ == '__main__':
     main()
