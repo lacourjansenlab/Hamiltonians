@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+# This python script require vpython to be installed (see vpython.org)
+# vpython is used for the structural visualization
 from vpython import *
 import sys
 sys.path.append("../Spectra")
@@ -61,4 +63,6 @@ for n in range(N):
 Structure.visual(x,mu,N,1)
 # Make spectrum
 Spectra.absorption(H,mu,N,10)
+# Visualize state
+#visual_exciton(x,mu,c,index,N,scale)
 
