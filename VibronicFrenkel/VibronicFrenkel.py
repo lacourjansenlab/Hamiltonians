@@ -23,19 +23,15 @@
 
 #------------------------------------------------------------------------------#
 # Hamiltonian generator
-def gen_hamiltonian(p):
+def gen_hamiltonian(p,ops,fc_table):
     import numpy as np
 
-    # Determine size of one-particle Hamiltonian and initiate
-    p.size = p.N*(p.MaxVib+1)
+    # Initiate and generate
     H = np.zeros((p.size,p.size),dtype=np.double)
-
-    # Generate Franck-Condon factors between ground state and excited state
-    fc_table = gen_fc_table(p.S,p.MaxVib)
-
-    # Generate one-particle states Hamiltonian
-    ops = index_ops(p)
     H = gen_h_ops(p,fc_table,ops,H)
+
+    if (p.v):
+        print('Hamiltonian:\n', H)
 
     return H
 
@@ -51,6 +47,40 @@ def index_ops(p):
             count = count + 1
 
     return ops
+
+#------------------------------------------------------------------------------#
+# Generate transition dipole moments
+def gen_dipoles(p,ops,fc_table):
+    import numpy as np
+    mu = np.zeros((p.size,3))
+
+    for n in range(p.N):
+        for v in range(p.MaxVib+1):
+            loca = ops[n,v]
+            if (loca<0): continue
+            mu[loca,:] = np.multiply(p.oscillator_strength,fc_table[0,v])
+
+    if (p.v):
+        print('Dipoles:\n', mu)
+
+    return mu
+
+#------------------------------------------------------------------------------#
+# Generate gen_positions
+def gen_positions(p,ops):
+    import numpy as np
+    pos = np.zeros((p.size,3))
+
+    for n in range(p.N):
+        for v in range(p.MaxVib+1):
+            loca = ops[n,v]
+            if (loca<0): continue
+            pos[loca,0] = n
+
+    if (p.v):
+        print('Position vectors:\n', pos)
+
+    return pos
 
 #------------------------------------------------------------------------------#
 # Generate one-particle states Hamiltonian
@@ -72,10 +102,11 @@ def gen_h_ops(p,fc_table,ops,H):
             if (loca < 0): continue
             for m in range(p.N):
                 if (n == m): continue
+                if (np.abs(n-m)>1): continue
                 for q in range(p.MaxVib+1):
                     locb = ops[m,q]
                     if (locb < 0 or loca == locb): continue
-                    H[loca,locb] = H[loca,locb] + p.J*fc_table[0,v]*fc_table[0,q]
+                    H[loca,locb] = p.J*fc_table[v,0]*fc_table[0,q]
     return H
 
 #------------------------------------------------------------------------------#
@@ -123,6 +154,7 @@ default_parameters = {
     "wvib": 1400,
     "S": 1,
     "sigma": 0,
+    "oscillator_strength": [1,0,0],
     "units": "wavenumbers"
 }
 
@@ -138,8 +170,9 @@ def main():
     # Look at arguments provided by user
     import argparse
     parser = argparse.ArgumentParser(prog='VibronicFrenkel', usage='python3 %(prog)s.py [options]')
-    parser.add_argument('-I', default='default', help='Input file (json).')
-    parser.add_argument('--test', action='store_true', help='Run the test suite and exit.')
+    parser.add_argument('-I', default='default', help='Path to input file (json).')
+    parser.add_argument('-v', action='store_true', help='Run verbose mode.')
+    parser.add_argument('--test', action='store_true', help='Run test suite and exit.')
     args = parser.parse_args()
 
     # Run tests
@@ -168,9 +201,26 @@ def main():
 
         p = Autovar(json.loads(input_file))
 
-    H = gen_hamiltonian(p)
+    # Store verbose
+    p.v = args.v
 
-    print("Hamiltonian:\n",H)
+    # Determine number of states, for initiating arrays
+    p.size = p.N*(p.MaxVib+1)
+
+    # Generate Franck-Condon factors between ground state and excited state
+    fc_table = gen_fc_table(p.S,p.MaxVib)
+
+    # Index one-particle states
+    ops = index_ops(p)
+
+    # Generate dipole-moments
+    mu = gen_dipoles(p,ops,fc_table)
+
+    # Generate positions
+    pos = gen_positions(p,ops)
+
+    # Generate Hamiltonian
+    H = gen_hamiltonian(p,ops,fc_table)
 
 #------------------------------------------------------------------------------#
 # Run code
