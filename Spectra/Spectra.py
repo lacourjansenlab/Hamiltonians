@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # intended as a way to test the Hamiltonians generated in this package.
 def absorption(H,mu,N,sigma):
   # Diagonalize Hamiltonian
-  E,c=np.linalg.eig(H)
+  E,c=np.linalg.eigh(H)
 
   # Make spectrum
   bins=1000
