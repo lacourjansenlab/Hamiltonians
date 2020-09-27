@@ -1,6 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+### Define Plotting Defaults
+plt.rcParams['axes.linewidth'] = 2
+plt.rcParams['xtick.major.size']=8
+plt.rcParams['ytick.major.size']=8
+plt.rcParams['xtick.major.width']=2
+plt.rcParams['ytick.major.width']=2
+plt.rcParams['xtick.direction']='in'
+plt.rcParams['ytick.direction']='in'
+
 # This subroutine calculates stick spectra and spectra convolouted with
 # a Gaussian. Provide the Hamiltonian, H, the transition-dipoles, mu,
 # the size of the Hamiltonian, N, and the standard deviation for the
@@ -32,6 +41,8 @@ def absorption(H,mu,N,sigma):
     Ey[bin]=Ey[bin]+np.linalg.norm(Emu)**2
 
   plt.plot(Ex,Ey)
+  plt.xlabel('Wavenumbers [cm$^{-1}$]',fontsize=16)
+  plt.ylabel('Absorption [arb.u.]', fontsize=16)
   plt.show()
 
   # Convolute spectrum
@@ -39,6 +50,8 @@ def absorption(H,mu,N,sigma):
   Cx=Ex-(Emax+Emin)/2 # Make new axis with value zero in the middle of array
   Cy=np.exp(-Cx**2/2/sigma**2)/np.sqrt(2*np.pi*sigma**2)
   plt.plot(Cx,Cy)
+  plt.xlabel('Wavenumbers [cm$^{-1}$]',fontsize=16)
+  plt.ylabel('Absorption [arb.u.]', fontsize=16)
   plt.show()
 
   # Do the actual convolusion
@@ -50,4 +63,6 @@ def absorption(H,mu,N,sigma):
   plt.plot(Ex,Ey/np.max(Ey))
   plt.plot(Ex,Cy/np.max(Cy))
   plt.plot(Ex,Ny/np.max(Ny))
+  plt.xlabel('Wavenumbers [cm$^{-1}$]',fontsize=16)
+  plt.ylabel('Absorption [arb.u.]', fontsize=16)
   plt.show()
