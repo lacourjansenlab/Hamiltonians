@@ -7,6 +7,7 @@ import sys
 sys.path.append("../Spectra")
 sys.path.append("../Structure")
 import Spectra
+import CD
 import Structure
 
 # Global parameters
@@ -19,7 +20,7 @@ print(A)
 # Define Parameters
 d=16.0 # Distance between molecules along spiral in Ångstrøm
 r=3.0 # Distance between layers in Ångstrøm
-N=2 # Number of molecules
+N=20 # Number of molecules
 n0=2 # Number of first point
 d2r=np.pi/180.0 # Degree to radians
 alpha=4.0*d2r # Alpha angle for transition dipole
@@ -60,9 +61,10 @@ for n in range(N):
     H[m,n]=J*A
 
 # Plot structure
-Structure.visual(x,mu,N,1)
+#Structure.visual(x,mu,N,1)
 # Make spectrum
 Spectra.absorption(H,mu,N,10)
+CD.CD(H,mu,x,N,10)
 # Visualize state
 #visual_exciton(x,mu,c,index,N,scale)
 
