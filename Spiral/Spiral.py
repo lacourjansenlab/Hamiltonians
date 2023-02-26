@@ -56,12 +56,12 @@ for n in range(N):
     dd=np.linalg.norm(dx)
     d3=dd*dd*dd
     d5=d3*dd*dd
-    J=np.inner(mu[n,:],mu[m,:])/d3+np.inner(mu[n,:],dx)*np.inner(dx,mu[m,:])/d5
+    J=np.inner(mu[n,:],mu[m,:])/d3-3*np.inner(mu[n,:],dx)*np.inner(dx,mu[m,:])/d5
     H[n,m]=J*A
     H[m,n]=J*A
 
 # Plot structure
-#Structure.visual(x,mu,N,1)
+Structure.visual(x,mu,N,1)
 # Make spectrum
 Spectra.absorption(H,mu,N,10)
 CD.CD(H,mu,x,N,10)
